@@ -2,16 +2,36 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\User: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email # Utilise l'email pour identifier l'utilisateur
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
+
+            # Activer le formulaire de connexion
+            form_login:
+                login_path: auth.login         # ici la route pour afficher le formulaire de connexion
+                check_path: auth.login         # ici la route pour vérifier les identifiants envoyés
+                username_parameter: _username  # le nom du champ pour l'email dans le formulaire
+                password_parameter: _password  # le nom du champ pour le mot de passe
+                csrf_token_id: authenticate    # identifiant du token CSRF
+                default_target_path: / # Rediriger vers la route 'home'
+
+            # Activer la déconnexion
+            logout:
+                path: auth.logout              # ici la route pour la déconnexion
+                target: auth.login               # Redirection après déconnexion
+                csrf_token_manager: security.csrf.token_manager  # ajout d'une protection pour sécurisé la déconnexion
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
