@@ -29,7 +29,7 @@
                                 </p>
                             </div>
                             <div class="flex justify-center">
-                                <a class="btn btn-dark" href="#" data-modal-toggle="#book_modal">
+                                <a class="btn btn-dark" href="javascript:void(0);" data-modal-toggle="#book_modal"> <!--  moyen de bloquer le rechargement de la page -->
                                     Ajouter une lecture
                                 </a>
                             </div>
@@ -54,5 +54,26 @@
             </div>
         </div>
         <!-- end: grid -->
+
+        <!-- Inclusion de la popup avec transmission de la variable books -->
+        {% include 'modals/book.html.twig' with { books: books } %}
     </div>
+
+    <script>
+    $(document).ready(function() {
+        // moyen pour empêcher rechargement de la page et ouvrir la popup
+        $('a[data-modal-toggle="#book_modal"]').on('click', function(e) {
+            e.preventDefault(); // Empêche le comportement par défaut du lien
+            $('#book_modal').addClass('active'); // class utile pour le css
+        });
+
+        // Fermer la popup en cliquant en dehors
+        $('#book_modal').on('click', function(e) {
+            if ($(e.target).is('#book_modal')) {
+                $(this).removeClass('active');
+            }
+        });
+    });
+    </script>
+    
 {% endblock %}

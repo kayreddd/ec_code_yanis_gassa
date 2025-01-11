@@ -11,7 +11,7 @@
          data-scrollable="true" data-scrollable-dependencies="#sidebar_header,#sidebar_footer"
          data-scrollable-height="auto" data-scrollable-offset="80px"
          data-scrollable-wrappers="#sidebar_menu_wrapper" id="sidebar_menu_wrapper">
-        <!-- Sidebar Menu -->
+
         <div class="menu flex flex-col gap-2.5 grow" data-menu="true" id="sidebar_menu">
             <div class="menu-item">
                 <a class="menu-link rounded-[9px] border border-transparent menu-item-active:border-gray-200 menu-item-active:bg-light menu-link-hover:bg-light menu-link-hover:border-gray-200 w-[62px] h-[60px] flex flex-col justify-center items-center gap-1 p-2"
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <!-- End of Sidebar Menu -->
+
     </div>
     <div class="flex flex-col gap-5 items-center shrink-0 pb-4" id="sidebar_footer">
         <div class="menu" data-menu="true">
@@ -137,10 +137,12 @@
                             </div>
                         </div>
                         <div class="menu-item px-4 py-1.5">
-                            <a class="btn btn-sm btn-light justify-center"
-                               href="#">
-                                Me déconnecer
-                            </a>
+                            <form method="post" action="{{ path('auth.logout') }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                                    <button type="submit" class="btn btn-sm btn-light justify-center">
+                                    Me déconnecter
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

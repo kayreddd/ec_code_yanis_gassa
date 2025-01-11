@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookReadRepository::class)]
+#[ORM\Table(name: "book_read")] // table dans la base de données
 class BookRead
 {
     #[ORM\Id]
@@ -37,6 +38,11 @@ class BookRead
 
     #[ORM\Column]
     private ?\DateTime $updated_at = null;
+
+    // Ajout de la relation ManyToOne
+    #[ORM\ManyToOne(targetEntity: "App\Entity\Book", inversedBy: "bookReads")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Book $book = null;
 
     public function getId(): ?int
     {
@@ -135,6 +141,19 @@ class BookRead
     public function setUpdatedAt(\DateTime $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    // Getter et Setter pour la relation Book
+    public function getBook(): ?Book
+    {
+        return $this->book;
+    }
+
+    public function setBook(?Book $book): static
+    {
+        $this->book = $book;
 
         return $this;
     }
