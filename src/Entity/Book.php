@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\BookRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -11,7 +13,7 @@ class Book
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -20,20 +22,28 @@ class Book
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(type: "bigint")]
     private ?string $category_id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $pages = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $publication_date = null;
 
-    #[ORM\Column]
-    private ?\DateTime $created_at = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
 
-    #[ORM\Column]
-    private ?\DateTime $updated_at = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\OneToMany(mappedBy: "book", targetEntity: BookRead::class, cascade: ["persist", "remove"])]
+    private Collection $bookReads;
+
+    public function __construct()
+    {
+        $this->bookReads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -45,10 +55,9 @@ class Book
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -57,10 +66,9 @@ class Book
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -69,10 +77,9 @@ class Book
         return $this->category_id;
     }
 
-    public function setCategoryId(string $category_id): static
+    public function setCategoryId(string $category_id): self
     {
         $this->category_id = $category_id;
-
         return $this;
     }
 
@@ -81,10 +88,9 @@ class Book
         return $this->pages;
     }
 
-    public function setPages(int $pages): static
+    public function setPages(int $pages): self
     {
         $this->pages = $pages;
-
         return $this;
     }
 
@@ -93,33 +99,61 @@ class Book
         return $this->publication_date;
     }
 
-    public function setPublicationDate(\DateTimeInterface $publication_date): static
+    public function setPublicationDate(\DateTimeInterface $publication_date): self
     {
         $this->publication_date = $publication_date;
-
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTime $created_at): static
+    public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
-
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTime $updated_at): static
+    public function setUpdatedAt(\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    //essai de code non abouti
+    /**
+     * @return Collection<int, BookRead>
+     */
+    public function getBookReads(): Collection
+    {
+        return $this->bookReads;
+    }
+
+    public function addBookRead(BookRead $bookRead): self
+    {
+        if (!$this->bookReads->contains($bookRead)) {
+            $this->bookReads->add($bookRead);
+            $bookRead->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookRead(BookRead $bookRead): self
+    {
+        if ($this->bookReads->removeElement($bookRead)) {
+        
+            if ($bookRead->getBook() === $this) {
+                $bookRead->setBook(null);
+            }
+        }
 
         return $this;
     }

@@ -36,15 +36,15 @@
                                 <div class="flex flex-col gap-2">
                                     <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary"
                                        href="#">
-                                        ERREUR : Impossible de récupérer le titre
+                                        {{ bookRead.book.name }} <!-- Affichage du titre du livre -->
                                     </a>
                                     <span class="text-2sm text-gray-700 font-normal leading-3">
-                                    ERREUR : Impossible de récupérer la description
-                                </span>
+                                        {{ bookRead.description }} <!-- Affichage de la description -->
+                                    </span>
                                 </div>
                             </td>
                             <td class="text-end">
-                                {{ bookRead.updatedAt|date('d/m/Y à H:i') }}
+                                {{ bookRead.updatedAt|date('d/m/Y à H:i') }} <!-- Affichage de la date de modification -->
                             </td>
                         </tr>
                     {% endfor %}

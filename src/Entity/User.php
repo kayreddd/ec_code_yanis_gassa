@@ -20,6 +20,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
+        #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookRead::class)]
+
+
     public function getId(): ?int
     {
         return $this->id;

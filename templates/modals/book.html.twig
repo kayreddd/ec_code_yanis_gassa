@@ -11,22 +11,26 @@
                         <div class="flex flex-col gap-1">
                             <label for="book" class="form-label font-normal text-gray-900">Livre</label>
                             <select id="book" class="select">
-                                <option>Livre 1</option>
-                                <option>Livre 2</option>
+                            <!-- on bouble l'id et le name depuis la bdd -->
+                                {% for book in books %}
+                                    <option value="{{ book.id }}">{{ book.name }}</option>
+                                {% else %}
+                                    <option disabled>Aucun livre disponible</option>
+                                {% endfor %}
                             </select>
                         </div>
 
                         <div class="flex flex-col gap-1">
                             <label class="form-label font-normal text-gray-900">Mes notes</label>
                             <div class="flex flex-col w-full gap-1">
-                            <textarea name="description" class="textarea"
-                                      placeholder="Notez-ici les idées importantes de l'oeuvre."></textarea>
+                                <textarea name="description" class="textarea"
+                                          placeholder="Notez-ici les idées importantes de l'oeuvre."></textarea>
                             </div>
                         </div>
 
                         <div class="flex flex-col gap-1">
-                            <label for="book" class="form-label font-normal text-gray-900">Note</label>
-                            <select id="book" class="select" name="rating">
+                            <label for="rating" class="form-label font-normal text-gray-900">Note</label>
+                            <select id="rating" class="select" name="rating">
                                 <option>1</option>
                                 <option>1.5</option>
                                 <option>2</option>
@@ -55,3 +59,45 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Envoi du formulaire via AJAX
+    $('#addBookForm').on('submit', function(e) {
+        e.preventDefault(); // Empêcher le rechargement de la page
+
+        // Récupérer les données du formulaire
+        var bookId = $('#book').val();
+        var description = $('textarea[name="description"]').val();
+        var rating = $('#rating').val();
+        var isFinished = $('input[name="check"]').is(':checked') ? 1 : 0;
+
+        // Envoi des données via AJAX
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('app.add_book_read') }}',  // Assurez-vous que cette route existe
+            data: {
+                bookId: bookId,
+                description: description,
+                rating: rating,
+                isFinished: isFinished
+            },
+            success: function(response) {
+                // Ajouter le livre à la liste "mes lectures en cours"
+                $('#current-books-table tbody').append(
+                    `<tr>
+                        <td>
+                            <div class="flex flex-col gap-2">
+                                <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="#">${response.bookName}</a>
+                                <span class="text-2sm text-gray-700 font-normal leading-3">${response.description}</span>
+                            </div>
+                        </td>
+                        <td class="text-end">${response.updatedAt}</td>
+                    </tr>`
+                );
+
+                // Fermer la popup
+                $('#book_modal').removeClass('active');
+            }
+        });
+    });
+</script>
